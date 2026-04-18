@@ -231,3 +231,51 @@ def brier_score(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     y_true = np.asarray(y_true, dtype=np.float64)
     y_pred = np.asarray(y_pred, dtype=np.float64)
     return float(np.mean((y_pred - y_true) ** 2))
+
+
+def expected_calibration_error(
+    y_true: np.ndarray,
+    y_pred: np.ndarray,
+    n_bins: int = 10,
+) -> float:
+    """Expected Calibration Error (ECE).
+
+    Measures the weighted average of the absolute difference between
+    predicted probability and observed frequency in each bin.
+
+    ECE = Sum_i ( |pred_i - obs_i| * N_i / N )
+
+    Args:
+        y_true: Binary outcomes (0/1).
+        y_pred: Predicted probabilities.
+        n_bins: Number of equal-width bins (default=10).
+
+    Returns:
+        Expected calibration error in [0, 1]. Lower is better.
+    """
+    y_true = np.asarray(y_true, dtype=np.float64)
+    y_pred = np.asarray(y_pred, dtype=np.float64)
+    
+    if len(y_true) == 0:
+        return 0.0
+
+    bins = np.linspace(0.0, 1.0, n_bins + 1)
+    bin_indices = np.digitize(y_pred, bins, right=False)
+    
+    ece = 0.0
+    n_total = len(y_true)
+    
+    for b in range(1, n_bins + 1):
+        # Handle the edge case where y_pred == 1.0 falls into bin index n_bins + 1
+        mask = bin_indices == b
+        if b == n_bins:
+            mask = mask | (bin_indices == n_bins + 1)
+            
+        n_bin = np.sum(mask)
+        if n_bin > 0:
+            pred_mean = np.mean(y_pred[mask])
+            obs_mean = np.mean(y_true[mask])
+            ece += np.abs(pred_mean - obs_mean) * (n_bin / n_total)
+            
+    return float(ece)
+

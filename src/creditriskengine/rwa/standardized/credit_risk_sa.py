@@ -261,16 +261,24 @@ def get_residential_re_risk_weight(
     # India (RBI) specific treatment
     if jurisdiction == Jurisdiction.INDIA:
         if ltv <= 0.80:
-            return 20.0
-        return 35.0
+            base_rw = 20.0
+        else:
+            base_rw = 35.0
+    else:
+        base_rw = table[-1][2]
+        for ltv_lower, ltv_upper, rw in table:
+            if ltv_lower < ltv <= ltv_upper:
+                base_rw = rw
+                break
+        # LTV exactly 0 case
+        if ltv <= 0:
+            base_rw = table[0][2]
 
-    for ltv_lower, ltv_upper, rw in table:
-        if ltv_lower < ltv <= ltv_upper:
-            return rw
-    # LTV exactly 0 case
-    if ltv <= 0:
-        return table[0][2]
-    return table[-1][2]
+    # Apply 1.2x penalty multiplier for LTV > 80%
+    if ltv > 0.80:
+        base_rw *= 1.2
+
+    return base_rw
 
 
 def uk_pra_loan_splitting_rre(

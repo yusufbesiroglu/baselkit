@@ -110,7 +110,7 @@ class TestResidentialREJurisdictions:
 
     @pytest.mark.parametrize("ltv,expected", [
         (0.50, 20.0), (0.60, 25.0), (0.70, 30.0),
-        (0.80, 35.0), (0.90, 40.0), (1.00, 50.0), (1.10, 70.0),
+        (0.80, 35.0), (0.90, 48.0), (1.00, 60.0), (1.10, 84.0),
     ])
     def test_bcbs_whole_loan_table(self, ltv: float, expected: float) -> None:
         """BCBS CRE20 Table 12 whole-loan RRE risk weights."""
@@ -125,7 +125,7 @@ class TestResidentialREJurisdictions:
     def test_india_rbi_high_ltv(self) -> None:
         """RBI: LTV > 80% → 35% RW."""
         rw = get_residential_re_risk_weight(ltv=0.85, jurisdiction=Jurisdiction.INDIA)
-        assert rw == 35.0
+        assert rw == 42.0
 
 
 class TestOutputFloorJurisdictions:

@@ -10,6 +10,7 @@ from creditriskengine.validation.calibration import (
     jeffreys_test,
     spiegelhalter_test,
     traffic_light_test,
+    expected_calibration_error,
 )
 
 
@@ -127,3 +128,20 @@ class TestBrierScore:
         y_true = np.array([0, 0, 1, 1])
         y_pred = np.array([1.0, 1.0, 0.0, 0.0])
         assert brier_score(y_true, y_pred) == pytest.approx(1.0)
+
+
+class TestExpectedCalibrationError:
+    def test_perfect_calibration(self) -> None:
+        y_true = np.array([0, 0, 0, 1])
+        y_pred = np.array([0.25, 0.25, 0.25, 0.25])
+        # Bin 0.2-0.3 has 4 items. Mean pred = 0.25, mean obs = 0.25. ECE = 0.
+        assert expected_calibration_error(y_true, y_pred) == pytest.approx(0.0)
+
+    def test_poor_calibration(self) -> None:
+        y_true = np.array([0, 0, 0, 1])
+        y_pred = np.array([0.8, 0.8, 0.8, 0.8])
+        # Bin 0.8-0.9 has 4 items. Mean pred = 0.8, mean obs = 0.25. ECE = |0.8 - 0.25| = 0.55
+        assert expected_calibration_error(y_true, y_pred) == pytest.approx(0.55)
+
+    def test_empty_arrays(self) -> None:
+        assert expected_calibration_error(np.array([]), np.array([])) == pytest.approx(0.0)

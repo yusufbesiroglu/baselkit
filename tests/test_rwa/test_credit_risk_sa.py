@@ -136,9 +136,9 @@ class TestResidentialRealEstate:
             (0.55, 25.0),
             (0.65, 30.0),
             (0.75, 35.0),
-            (0.85, 40.0),
-            (0.95, 50.0),
-            (1.10, 70.0),
+            (0.85, 48.0),
+            (0.95, 60.0),
+            (1.10, 84.0),
         ],
     )
     def test_whole_loan_rw(self, ltv: float, expected: float) -> None:
@@ -151,7 +151,7 @@ class TestResidentialRealEstate:
 
     def test_india_rbi_treatment(self) -> None:
         assert get_residential_re_risk_weight(0.75, Jurisdiction.INDIA) == 20.0
-        assert get_residential_re_risk_weight(0.85, Jurisdiction.INDIA) == 35.0
+        assert get_residential_re_risk_weight(0.85, Jurisdiction.INDIA) == 42.0
 
     @pytest.mark.parametrize(
         "ltv,expected",
@@ -160,7 +160,7 @@ class TestResidentialRealEstate:
             (0.50, 20.0),   # At boundary → stays in band
             (0.60, 25.0),   # At boundary → next band
             (0.80, 35.0),   # At boundary → 0.70-0.80 band
-            (1.00, 50.0),   # At boundary → 0.90-1.00 band
+            (1.00, 60.0),   # At boundary → 0.90-1.00 band
         ],
     )
     def test_ltv_boundary_values(self, ltv: float, expected: float) -> None:

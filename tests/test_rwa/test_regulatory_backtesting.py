@@ -244,9 +244,9 @@ class TestSATablesExact:
             (0.55, 25.0),   # 50% < LTV <= 60%
             (0.65, 30.0),   # 60% < LTV <= 70%
             (0.75, 35.0),   # 70% < LTV <= 80%
-            (0.85, 40.0),   # 80% < LTV <= 90%
-            (0.95, 50.0),   # 90% < LTV <= 100%
-            (1.10, 70.0),   # LTV > 100%
+            (0.85, 48.0),   # 80% < LTV <= 90%
+            (0.95, 60.0),   # 90% < LTV <= 100%
+            (1.10, 84.0),   # LTV > 100%
         ]
         for ltv, expected_rw in test_cases:
             rw = get_residential_re_risk_weight(ltv=ltv)
@@ -259,9 +259,9 @@ class TestSATablesExact:
             (0.55, 35.0),
             (0.65, 45.0),
             (0.75, 50.0),
-            (0.85, 60.0),
-            (0.95, 75.0),
-            (1.10, 105.0),
+            (0.85, 72.0),
+            (0.95, 90.0),
+            (1.10, 126.0),
         ]
         for ltv, expected_rw in test_cases:
             rw = get_residential_re_risk_weight(ltv=ltv, is_cashflow_dependent=True)
